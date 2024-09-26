@@ -1,0 +1,179 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Perfpack FX</title>
+  <meta name="description" content="Perf lab FX">
+
+  <link rel="stylesheet" href="https://bootswatch.com/4/journal/bootstrap.min.css">
+  <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+    <main role="main" class="container">
+
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+				      <h1 class="mt-5">Perfpack FX</h1>
+				      <p class="lead">quantified computer system scalability</p>
+				</div>
+			</div>
+			<div class="row section">
+				<div class="col-12">
+					<h4 class="col-name">Inputs</h4>
+				  	<textarea style="min-width: 100%" rows="10" cols="75" id="tabData" required></textarea>
+					<p>Collected N and X(N) from performance tests, live production or any other source</p>
+
+					<div id="error-message" class="alert alert-warning" role="alert">
+						USL evaluation in progress ...
+					</div>
+
+				</div>
+			</div>
+
+			<div class="row section">
+				<div class="col-12">
+					<h4 class="col-name">Observations</h4>
+				  	
+				  	<table id="measurements" class="table table-bordered table-sm table-hover text-center">
+					  <thead>
+					    <tr>
+					      <th scope="col">N</th>
+					      <th scope="col">X</th>
+					      <th scope="col">C</th>
+					      <th scope="col">Efficiency C/N</th>
+					      <th scope="col">Inverse N/C</th>
+					      <th scope="col">Liniarity N-1</th>
+					      <th scope="col">Deviation (N/C)-1</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    <tr>
+					      <th scope="row">1</th>
+					      <td>@mdo</td>
+					      <td>@mdo</td>
+					      <td>@mdo</td>
+					      <td>@mdo</td>
+					      <td>@mdo</td>
+					      <td>@mdo</td>
+					      <td>@mdo</td>
+					    </tr>
+					  </tbody>
+					</table>
+
+					<p> 
+						N - number of load generators or processors<br/>
+						X(N) - throughput for N <br/>
+						C(N) - where C(N) = X(N) / X(1) is the relative capacity<br/>
+						C/N	- efficiency per processor<br/>
+						N/C	- inverse of efficiency<br/>
+						N-1 - liniar scalability<br/>	
+						(N/C)-1 - deviation from liniarity
+					</p>
+				</div>
+			</div>
+
+
+			<div class="row section">
+				<div class="col-12">
+					<h4 class="col-name">Universal Scalability Law</h4>
+					<img src="" id="img" class="mx-auto d-block" style="width: 700px; height: 400px;">
+				</div>
+			</div>
+
+			<div class="row section">
+				<div class="col-12">
+					&nbsp;
+				</div>
+			</div>
+
+		</div>
+
+	   <footer id="footer">
+	        <div class="row">
+	            <div class="col-lg-12">
+
+	                <ul class="list-unstyled">
+	                  <li><a href="https://twitter.com/ruslanrusu">Twitter</a></li>
+	                  <li><a href="https://github.com/i95north">GitHub</a></li>
+	                </ul>
+	                <p>Made by <a href="https://twitter.com/ruslanrusu">Ruslan Rusu</a>.</p>
+
+	                <p>Code released under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
+	                <p>Based on <a href="https://getbootstrap.com" rel="nofollow">Bootstrap</a>. Icons from <a href="https://fontawesome.com/" rel="nofollow">Font Awesome</a>. Web fonts from <a href="https://fonts.google.com/" rel="nofollow">Google</a>.</p>
+	                <p>Version: 0000</p>
+
+	            </div>
+	        </div>
+
+	    </footer>
+
+
+    </main>
+
+ 
+
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script src="scripts.js"></script>
+
+	<script type="text/javascript">
+		function evalData(){
+        	var table = $('#tabData').val()
+        	$.post("/usl", {data: table})
+			    .done(function(data){  
+	              	//console.log(data)
+	              	$("#img").show();
+	              	$('#error-message').hide();
+	              	$("#img").attr("src","data:image/;base64,"+data);
+			    })
+			    .fail(function(xhr, status, error) {
+			        console.log(xhr.responseText);
+			        $('#error-message').text(xhr.responseText);
+			        $('#error-message').show();
+			        $("#img").hide();
+			    });
+
+			$.post("/review", {data: table})
+			    .done(function(data){  
+	              	//console.log(data)
+
+	              	var tbody = $("#measurements > tbody")
+	              	tbody.empty();
+
+	              	data.forEach(function(element) {
+					  //console.log(element);
+
+					  tbody.append("<tr>" +
+							      "<td>" + element.n +"</td>" +
+							      "<td>" + element.x +"</td>" +
+							      "<td>" + element.cn +"</td>" +
+							      "<td>" + element.cdivn +"</td>" +
+							      "<td>" + element.ndivc +"</td>" +
+							      "<td>" + element.liniarity +"</td>" +
+							      "<td>" + element.deviation +"</td>" +
+							    "</tr>");
+					});
+			    })
+			    .fail(function(xhr, status, error) {
+			        console.log(xhr.responseText);
+			    });    
+		}
+
+		$.get("/nxr.csv", function( data ) {
+            $('#tabData').val(data)
+            evalData()
+        });
+
+        $('#tabData').bind('input propertychange', function() {
+        	evalData()
+		});
+	</script>
+</body>
+</html>

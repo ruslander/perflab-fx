@@ -1,13 +1,13 @@
-# Apply USL model to scalability measurements
-# See http://www.perfdynamics.com/Manifesto/USLscalability.html
-# Created by Neil Gunther on Tue May 19 2009
-
-# Read in the raw data from the file
-fname<-"nxr.csv" 	# Example data filename
-dir<-"data"				# Your dir path here
-fullname<-paste(dir, fname, sep = "/")
-if(is.character(fullname) != TRUE) { print("Bad file name") }
-input <- read.csv(file=fullname, header=TRUE, sep=",")
+input <- read.csv(
+  text = "N,R,X
+1,205,5
+3,287,10
+5,439,10
+7,630,10
+9,833,11
+", 
+  header=TRUE, 
+  sep=",")
 
 # Take a look at raw data
 print("Raw input data")
